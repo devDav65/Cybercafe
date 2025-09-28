@@ -20,7 +20,7 @@
     <TextField fx:id="utilisateurIdField" promptText="Utilisateur ID" styleClass="form-field"/>
     <TextField fx:id="posteIdField" promptText="Poste ID" styleClass="form-field"/>
     <Button text="Ajouter" onAction="#ajouterDemande" styleClass="primary-btn"/>
-    <Button text="Modifier" onAction="#modifierDemande" styleClass="secondary-btn"/>
+    <Button text="Modifier" onAction="#modifierDemande" styleClass="primary-btn"/>
     <Button text="Supprimer" onAction="#supprimerDemande" styleClass="danger-btn"/>
   </HBox>
   <!-- Barre de recherche -->

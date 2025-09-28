@@ -1,21 +1,21 @@
-/* Racine */
+/* ---------- Racine ---------- */
 .root-pane {
     -fx-padding: 25;
     -fx-background-color: #ecf0f1;
     -fx-font-family: "Segoe UI", "Roboto", sans-serif;
 }
 
-/* Titre */
+/* ---------- Titre ---------- */
 .title-label {
-    -fx-font-size: 20px;
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #2c3e50;
 }
 
-/* Champs texte & date */
+/* ---------- Champs texte & DatePicker ---------- */
 .form-field {
-    -fx-pref-width: 150;
-    -fx-padding: 6 10;
+    -fx-pref-width: 150px;
+    -fx-padding: 6 10 6 10;
     -fx-background-radius: 6;
     -fx-background-color: #ffffff;
     -fx-border-color: #bdc3c7;
@@ -27,54 +27,71 @@
     -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 4, 0.4, 0, 0);
 }
 
-/* Boutons */
+/* ---------- Boutons ---------- */
 .primary-btn {
     -fx-background-color: #3498db;
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 6;
     -fx-padding: 6 14;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-min-width: 80px; 
+    -fx-alignment: CENTER;
 }
 .primary-btn:hover {
     -fx-background-color: #2980b9;
 }
 
-.secondary-btn {
-    -fx-background-color: #95a5a6;
-    -fx-text-fill: white;
-    -fx-background-radius: 6;
-    -fx-padding: 6 14;
-    -fx-font-weight: bold;
-}
-.secondary-btn:hover {
-    -fx-background-color: #7f8c8d;
-}
+
 
 .danger-btn {
     -fx-background-color: #e74c3c;
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 6;
     -fx-padding: 6 14;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-min-width: 100px; 
+    -fx-alignment: CENTER;
 }
 .danger-btn:hover {
     -fx-background-color: #c0392b;
 }
 
-/* Table */
+/* ---------- TableView ---------- */
 .data-table {
     -fx-background-color: #ffffff;
     -fx-border-color: #dfe6e9;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
     -fx-padding: 5;
+    -fx-table-cell-border-color: transparent;
 }
 
+/* Header */
 .data-table .column-header-background {
     -fx-background-color: #34495e;
 }
 
-.data-table .label {
+.data-table .column-header, 
+.data-table .column-header .label {
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+/* Cellules */
+.data-table .cell {
+    -fx-text-fill: #2c3e50;
+    -fx-alignment: CENTER;
+}
+
+/* Ligne survolée */
+.data-table .cell:hover {
+    -fx-background-color: rgba(52,152,219,0.1);
+}
+
+/* DatePicker arrow */
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
 }
