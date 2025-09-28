@@ -2,7 +2,7 @@ package com.example.monprojet.service;
 
 import com.example.monprojet.dao.JournalDAO;
 import com.example.monprojet.model.Journal;
-import com.example.monprojet.Util.Logger;
+//import com.example.monprojet.Util.Logger;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -19,10 +19,14 @@ public class JournalService {
             String action) {
         Journal j = new Journal(0, ipSource, ipDestination, protocole, horlotage, action);
         journalDAO.ajouterJournal(j);
-        Logger.logInfo("Journal enregistré: " + ipSource + " -> " + ipDestination);
+        // Logger.logInfo("Journal enregistré: " + ipSource + " -> " + ipDestination);
     }
 
     public List<Journal> listerJournaux() {
         return journalDAO.getAllJournaux();
+    }
+
+    public boolean supprimerJournal(int id) {
+        return journalDAO.delete(id);
     }
 }

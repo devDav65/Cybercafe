@@ -9,22 +9,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la table `journal`
- * Colonnes attendues :
- * id_journal INT AUTO_INCREMENT PRIMARY KEY
- * ipsource VARCHAR(...)
- * ipdestination VARCHAR(...)
- * protocole VARCHAR(...)
- * horlotage TIME
- * action VARCHAR(...)
- */
 public class JournalDAO {
 
-    /**
-     * Insert un nouveau journal.
-     * Après insertion, l'ID généré est mis dans l'objet Journal si possible.
-     */
     public void ajouterJournal(Journal j) {
         String sql = "INSERT INTO journal (ipsource, ipdestination, protocole, horlotage, action) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -34,7 +20,6 @@ public class JournalDAO {
             ps.setString(2, j.getIpdestination());
             ps.setString(3, j.getProtocole());
 
-            // horlotage attendu LocalTime dans le modèle
             LocalTime ht = j.getHorlotage();
             if (ht != null) {
                 ps.setTime(4, Time.valueOf(ht));
@@ -53,17 +38,14 @@ public class JournalDAO {
                         j.setId_journal(rs.getInt(1));
                     }
                 }
-                Logger.logInfo("✅ Journal ajouté : " + j.getIpsource() + " -> " + j.getIpdestination());
+                // Logger.logInfo("✅ Journal ajouté : " + j.getIpsource() + " -> " +
+                // j.getIpdestination());
             }
         } catch (SQLException e) {
             Logger.logError("❌ Erreur ajout journal", e);
         }
     }
 
-    /**
-     * Récupère tous les journaux ordonnés par id décroissant (les plus récents
-     * d'abord).
-     */
     public List<Journal> getAllJournaux() {
         List<Journal> list = new ArrayList<>();
         String sql = "SELECT id_journal, ipsource, ipdestination, protocole, horlotage, action FROM journal ORDER BY id_journal DESC";
@@ -81,9 +63,6 @@ public class JournalDAO {
         return list;
     }
 
-    /**
-     * Trouve un journal par son id.
-     */
     public Journal getJournalById(int id) {
         String sql = "SELECT id_journal, ipsource, ipdestination, protocole, horlotage, action FROM journal WHERE id_journal = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -101,9 +80,6 @@ public class JournalDAO {
         return null;
     }
 
-    /**
-     * Supprime un journal par id.
-     */
     public boolean delete(int id) {
         String sql = "DELETE FROM journal WHERE id_journal = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -124,11 +100,6 @@ public class JournalDAO {
         }
     }
 
-    /**
-     * Recherche des journaux par adresse IP source ou destination (mot-clé exact ou
-     * partiel).
-     * Exemple : keyword "192.168" trouvera toutes les IP contenant cette chaîne.
-     */
     public List<Journal> searchByIp(String keyword) {
         List<Journal> list = new ArrayList<>();
         String sql = "SELECT id_journal, ipsource, ipdestination, protocole, horlotage, action FROM journal WHERE ipsource LIKE ? OR ipdestination LIKE ? ORDER BY id_journal DESC";
@@ -150,25 +121,12 @@ public class JournalDAO {
         return list;
     }
 
-    /**
-     * Supprime les journaux plus anciens qu'un certain nombre de jours.
-     * Utile pour maintenance/rotation.
-     */
     public int deleteOlderThanDays(int days) {
-        // String sql = "DELETE FROM journal WHERE horlotage < ?";
-        // note : si tu stockes aussi une date complète, adapte la condition ; ici
-        // horlotage est TIME,
-        // donc normalement on ne peut pas comparer par date => ceci suppose que tu as
-        // horloge (TIME) et
-        // éventuellement une colonne date_si_exist DATE/TIMESTAMP. Si tu n'as pas de
-        // date, ignore cette méthode
+
         Logger.logInfo("deleteOlderThanDays non exécutée : vérifie la présence d'une colonne date si besoin.");
         return 0;
     }
 
-    /**
-     * Mappe la ligne ResultSet vers l'objet Journal.
-     */
     private Journal mapResultSetToJournal(ResultSet rs) throws SQLException {
         int id = rs.getInt("id_journal");
         String src = rs.getString("ipsource");

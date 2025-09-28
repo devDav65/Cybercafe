@@ -20,7 +20,7 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LoginView.fxml"));
         Scene scene = new Scene(loader.load());
 
-        processor.startPolling(Paths.get("chemin/vers/tes/fichiers"), 5);
+        processor.startPolling(Paths.get("simulated_packets.jsonl"), 1);
 
         scheduler.start();
 
@@ -30,10 +30,10 @@ public class App extends Application {
     }
 
     @Override
-    public void stop() {
-        scheduler.stop();
+    public void stop() throws Exception {
         processor.stop();
-
+        scheduler.stop();
+        super.stop();
     }
 
     public static void main(String[] args) {

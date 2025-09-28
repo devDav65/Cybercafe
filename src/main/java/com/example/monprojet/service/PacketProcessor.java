@@ -1,31 +1,29 @@
 package com.example.monprojet.service;
 
 import com.example.monprojet.model.Packet;
-import com.example.monprojet.model.Reglefiltre;
 import com.example.monprojet.model.Journal;
-import com.example.monprojet.dao.ReglefiltreDAO;
-import com.example.monprojet.dao.JournalDAO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.*;
 
+/**
+ * Lit un fichier JSONL de paquets et les enregistre dans la DB.
+ */
 public class PacketProcessor {
 
     private final ObjectMapper mapper;
-    private final ReglefiltreDAO regleDAO = new ReglefiltreDAO();
-    private final JournalDAO journalDAO = new JournalDAO();
-
+    private final JournalService journalService = new JournalService();
     private final ConcurrentHashMap<String, Long> blockedCache = new ConcurrentHashMap<>();
-    private final long dedupeWindowMillis = TimeUnit.SECONDS.toMillis(30); // 30 s de fenêtre anti-doublons
+    private final long dedupeWindowMillis = TimeUnit.SECONDS.toMillis(30);
 
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private volatile boolean running = false; // flag d'arrêt
+    private Thread pollingThread;
 
     public PacketProcessor() {
         mapper = new ObjectMapper();
@@ -33,109 +31,92 @@ public class PacketProcessor {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    /**
-     * Lance la surveillance d’un fichier ou d’un dossier.
-     * 
-     * @param dirOrFile       chemin du fichier ou du dossier contenant des .json
-     * @param intervalSeconds intervalle entre deux analyses
-     */
-    public void startPolling(Path dirOrFile, long intervalSeconds) {
-        System.out.println(LocalDateTime.now() + " - PacketProcessor started");
-        executor.scheduleWithFixedDelay(() -> {
+    /** Démarre le polling en arrière-plan */
+    public void startPolling(Path file, long intervalSeconds) {
+        if (running)
+            return;
+        running = true;
+
+        pollingThread = new Thread(() -> {
+            System.out.println(LocalDateTime.now() + " - PacketProcessor started");
+            while (running) {
+                try {
+                    pollFile(file);
+                    cleanupCache();
+                    Thread.sleep(intervalSeconds * 1000);
+                } catch (InterruptedException e) {
+                    // Arrêt demandé
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(LocalDateTime.now() + " - PacketProcessor stopped");
+        });
+        pollingThread.setDaemon(true); // ne bloque pas la JVM
+        pollingThread.start();
+    }
+
+    /** Stoppe proprement le polling */
+    public void stop() {
+        running = false;
+        if (pollingThread != null) {
+            pollingThread.interrupt();
             try {
-                pollFile(dirOrFile);
-            } catch (Exception e) {
+                pollingThread.join(2000);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            cleanupCache();
-        }, 0, intervalSeconds, TimeUnit.SECONDS);
+        }
+        blockedCache.clear();
     }
 
-    /** Arrête proprement le scheduler */
-    public void stop() {
-        executor.shutdownNow();
-    }
-
-    /** Supprime les entrées de cache expirées */
+    /** Nettoie les entrées expirées du cache */
     private void cleanupCache() {
         long now = System.currentTimeMillis();
         blockedCache.entrySet().removeIf(e -> e.getValue() < now);
     }
 
-    /** Parcourt un fichier ou un dossier et traite les paquets */
-    public void pollFile(Path file) throws IOException {
+    /** Lit le fichier et traite chaque paquet */
+    private void pollFile(Path file) throws IOException {
         if (!Files.exists(file))
             return;
 
-        if (Files.isDirectory(file)) {
-            try (DirectoryStream<Path> ds = Files.newDirectoryStream(file, "*.json")) {
-                for (Path p : ds) {
-                    processSingleFile(p);
-                }
+        List<String> lines = Files.readAllLines(file); // lecture non-bloquante
+        for (String line : lines) {
+            if (!running)
+                break;
+            try {
+                Packet pkt = mapper.readValue(line, Packet.class);
+                handlePacket(pkt);
+            } catch (Exception ex) {
+                System.err.println("Erreur parsing JSON: " + line);
+                ex.printStackTrace();
             }
-        } else {
-            processSingleFile(file);
         }
     }
 
-    /** Traite un fichier JSON unique contenant un tableau de paquets */
-    private void processSingleFile(Path p) {
-        try (BufferedReader reader = Files.newBufferedReader(p)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Packet pkt = mapper.readValue(line, Packet.class); // 1 objet par ligne
-                handlePacket(pkt, regleDAO.getAllRegles());
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /** Gère un paquet individuel : filtrage et enregistrement éventuel */
-    private void handlePacket(Packet pkt, List<Reglefiltre> rules) {
-        boolean blocked = isBlocked(pkt, rules);
+    /** Traite un paquet */
+    private void handlePacket(Packet pkt) {
         String key = pkt.getIpsource() + "|" + pkt.getIpdestination() + "|" + pkt.getProtocole();
+        long now = System.currentTimeMillis();
+        Long expiry = blockedCache.get(key);
 
-        if (blocked) {
-            long now = System.currentTimeMillis();
-            Long expiry = blockedCache.get(key);
-
-            if (expiry == null || expiry < now) {
-                String msg = "Blocked packet " + pkt.getIpsource() + " -> " + pkt.getIpdestination();
-                System.out.println(LocalDateTime.now() + " - " + msg);
-
-                // Enregistrement dans la base de données
-                Journal j = new Journal(
-                        0,
-                        pkt.getIpsource(),
-                        pkt.getIpdestination(),
-                        pkt.getProtocole(),
-                        pkt.getTimestamp().toLocalTime(),
-                        "BLOCK");
-                journalDAO.ajouterJournal(j);
-
-                // mémorise le blocage pour éviter les doublons immédiats
-                blockedCache.put(key, now + dedupeWindowMillis);
-            }
-        } else {
-            // Ici tu peux aussi logguer les paquets autorisés si besoin
-            // journalDAO.ajouterJournal(new Journal(..., "ALLOW"));
+        if (expiry == null || expiry < now) {
+            Journal j = new Journal(
+                    0,
+                    pkt.getIpsource(),
+                    pkt.getIpdestination(),
+                    pkt.getProtocole(),
+                    pkt.getTimestamp().toLocalTime(),
+                    "ALLOW");
+            journalService.enregistrerEntree(
+                    j.getIpsource(),
+                    j.getIpdestination(),
+                    j.getProtocole(),
+                    j.getHorlotage(),
+                    j.getAction());
+            blockedCache.put(key, now + dedupeWindowMillis);
         }
-    }
-
-    /** Vérifie si un paquet doit être bloqué en fonction des règles */
-    private boolean isBlocked(Packet pkt, List<Reglefiltre> rules) {
-        for (Reglefiltre r : rules) {
-            boolean ipMatch = r.getIp() == null || r.getIp().isBlank()
-                    || pkt.getIpsource().equals(r.getIp())
-                    || pkt.getIpdestination().equals(r.getIp());
-            boolean protoMatch = r.getProtocole() == null || r.getProtocole().isBlank()
-                    || pkt.getProtocole().equalsIgnoreCase(r.getProtocole());
-
-            if (ipMatch && protoMatch) {
-                return "block".equalsIgnoreCase(r.getAction()) || "deny".equalsIgnoreCase(r.getAction());
-            }
-        }
-        return false;
     }
 }

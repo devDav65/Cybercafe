@@ -12,7 +12,7 @@
       stylesheets="@../css/journal.css">
   <!-- ===== Titre ===== -->
   <Label text="Gestion du Journal des Paquets"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                     style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
   <!-- ===== Zone de recherche et actions ===== -->
   <HBox spacing="10" alignment="CENTER_LEFT">
     <TextField fx:id="searchField" promptText="Rechercher par IP ou protocole..."/>
