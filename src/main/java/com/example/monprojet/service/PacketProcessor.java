@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -19,11 +19,15 @@ public class PacketProcessor {
 
     private final ObjectMapper mapper;
     private final JournalService journalService = new JournalService();
+
     private final ConcurrentHashMap<String, Long> blockedCache = new ConcurrentHashMap<>();
     private final long dedupeWindowMillis = TimeUnit.SECONDS.toMillis(30);
 
-    private volatile boolean running = false; // flag d'arrêt
-    private Thread pollingThread;
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true); // le thread ne bloque plus la JVM
+        return t;
+    });
 
     public PacketProcessor() {
         mapper = new ObjectMapper();
@@ -31,92 +35,95 @@ public class PacketProcessor {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    /** Démarre le polling en arrière-plan */
+    /**
+     * Démarre la surveillance du fichier JSONL
+     * 
+     * @param file            chemin du fichier
+     * @param intervalSeconds intervalle entre deux lectures
+     */
+    private volatile boolean running = true; // flag d'arrêt
+
     public void startPolling(Path file, long intervalSeconds) {
-        if (running)
-            return;
-        running = true;
+        System.out.println(LocalDateTime.now() + " - PacketProcessor started");
 
-        pollingThread = new Thread(() -> {
-            System.out.println(LocalDateTime.now() + " - PacketProcessor started");
-            while (running) {
-                try {
-                    pollFile(file);
-                    cleanupCache();
-                    Thread.sleep(intervalSeconds * 1000);
-                } catch (InterruptedException e) {
-                    // Arrêt demandé
-                    break;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println(LocalDateTime.now() + " - PacketProcessor stopped");
-        });
-        pollingThread.setDaemon(true); // ne bloque pas la JVM
-        pollingThread.start();
-    }
-
-    /** Stoppe proprement le polling */
-    public void stop() {
-        running = false;
-        if (pollingThread != null) {
-            pollingThread.interrupt();
+        executor.scheduleWithFixedDelay(() -> {
+            if (!running)
+                return; // ne rien faire si on a arrêté
             try {
-                pollingThread.join(2000);
-            } catch (InterruptedException e) {
+                pollFile(file);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        blockedCache.clear();
+            cleanupCache();
+        }, 0, intervalSeconds, TimeUnit.SECONDS);
     }
 
-    /** Nettoie les entrées expirées du cache */
+    public void stop() {
+        running = false; // stoppe la boucle
+        executor.shutdownNow(); // interrompt toutes les tâches
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                System.out.println("Scheduler did not terminate in time. Forcing shutdown.");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        blockedCache.clear();
+        System.out.println(LocalDateTime.now() + " - PacketProcessor stopped");
+    }
+
+    /** Supprime les entrées de cache expirées */
     private void cleanupCache() {
         long now = System.currentTimeMillis();
         blockedCache.entrySet().removeIf(e -> e.getValue() < now);
     }
 
-    /** Lit le fichier et traite chaque paquet */
+    /** Lit le fichier et traite chaque ligne JSON */
     private void pollFile(Path file) throws IOException {
         if (!Files.exists(file))
             return;
 
-        List<String> lines = Files.readAllLines(file); // lecture non-bloquante
-        for (String line : lines) {
-            if (!running)
-                break;
-            try {
-                Packet pkt = mapper.readValue(line, Packet.class);
-                handlePacket(pkt);
-            } catch (Exception ex) {
-                System.err.println("Erreur parsing JSON: " + line);
-                ex.printStackTrace();
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                try {
+                    Packet pkt = mapper.readValue(line, Packet.class);
+                    handlePacket(pkt);
+                } catch (Exception ex) {
+                    System.err.println("Erreur parsing JSON: " + line);
+                    ex.printStackTrace();
+                }
             }
         }
     }
 
-    /** Traite un paquet */
+    /** Traite un paquet : insertion dans DB si pas doublon récent */
     private void handlePacket(Packet pkt) {
         String key = pkt.getIpsource() + "|" + pkt.getIpdestination() + "|" + pkt.getProtocole();
         long now = System.currentTimeMillis();
         Long expiry = blockedCache.get(key);
 
         if (expiry == null || expiry < now) {
+            // On enregistre le paquet dans la DB
             Journal j = new Journal(
                     0,
                     pkt.getIpsource(),
                     pkt.getIpdestination(),
                     pkt.getProtocole(),
                     pkt.getTimestamp().toLocalTime(),
-                    "ALLOW");
+                    "ALLOW" // ou "BLOCK" si tu veux appliquer des règles
+            );
             journalService.enregistrerEntree(
                     j.getIpsource(),
                     j.getIpdestination(),
                     j.getProtocole(),
                     j.getHorlotage(),
                     j.getAction());
+
+            // ajoute dans le cache anti-doublons
             blockedCache.put(key, now + dedupeWindowMillis);
+
+            // System.out.println(LocalDateTime.now() + " - Packet enregistré: " + key);
         }
     }
 }
