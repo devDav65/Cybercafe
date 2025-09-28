@@ -9,26 +9,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.*;
 
-/**
- * Service qui lit périodiquement un fichier (ou dossier) JSON contenant des
- * paquets
- * simulés, applique les règles de filtrage et enregistre les évènements dans la
- * table journal.
- */
 public class PacketProcessor {
 
     private final ObjectMapper mapper;
     private final ReglefiltreDAO regleDAO = new ReglefiltreDAO();
     private final JournalDAO journalDAO = new JournalDAO();
 
-    // Cache pour éviter de logguer plusieurs fois le même blocage (clé =
-    // src|dest|proto)
     private final ConcurrentHashMap<String, Long> blockedCache = new ConcurrentHashMap<>();
     private final long dedupeWindowMillis = TimeUnit.SECONDS.toMillis(30); // 30 s de fenêtre anti-doublons
 
@@ -87,18 +80,12 @@ public class PacketProcessor {
 
     /** Traite un fichier JSON unique contenant un tableau de paquets */
     private void processSingleFile(Path p) {
-        try {
-            Packet[] packets = mapper.readValue(p.toFile(), Packet[].class);
-            List<Reglefiltre> rules = regleDAO.getAllRegles();
-
-            for (Packet pkt : packets) {
-                handlePacket(pkt, rules);
+        try (BufferedReader reader = Files.newBufferedReader(p)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Packet pkt = mapper.readValue(line, Packet.class); // 1 objet par ligne
+                handlePacket(pkt, regleDAO.getAllRegles());
             }
-
-            // Exemple : déplacer ou renommer le fichier traité (optionnel)
-            // Files.move(p, p.resolveSibling(p.getFileName() + ".done"),
-            // StandardCopyOption.REPLACE_EXISTING);
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }

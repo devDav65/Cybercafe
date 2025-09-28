@@ -6,9 +6,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.application.Platform;
 
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Contrôleur JavaFX pour l'affichage du journal réseau
@@ -35,6 +39,7 @@ public class JournalController {
 
     private final JournalDAO journalDAO = new JournalDAO();
     private final ObservableList<Journal> data = FXCollections.observableArrayList();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @FXML
     public void initialize() {
@@ -53,13 +58,20 @@ public class JournalController {
                 cell -> new javafx.beans.property.SimpleStringProperty(cell.getValue().getAction()));
 
         chargerJournaux();
+        startAutoRefresh();
     }
 
-    /** Recharge la table depuis la base */
     private void chargerJournaux() {
         List<Journal> liste = journalDAO.getAllJournaux();
         data.setAll(liste);
         journalTable.setItems(data);
+    }
+
+    private void startAutoRefresh() {
+        scheduler.scheduleAtFixedRate(() -> {
+            List<Journal> list = journalDAO.getAllJournaux(); // Requêter la DB
+            Platform.runLater(() -> journalTable.setItems(FXCollections.observableArrayList(list)));
+        }, 0, 2, TimeUnit.SECONDS);
     }
 
     /** Recherche par mot-clé (IP source ou destination) */
@@ -107,5 +119,10 @@ public class JournalController {
 
     private void showAlert(String msg) {
         new Alert(Alert.AlertType.INFORMATION, msg).show();
+    }
+
+    @Override
+    public void finalize() throws Throwable {
+        scheduler.shutdownNow();
     }
 }
