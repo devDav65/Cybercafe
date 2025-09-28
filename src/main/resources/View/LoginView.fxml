@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.monprojet.controllers.LoginController"
+            stylesheets="@../css/login.css"
+            prefWidth="800" prefHeight="600"
+            styleClass = "gene">
+  <children>
+    <!-- Conteneur principal centré -->
+    <StackPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                                               AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+      <!-- Carte semi-transparente -->
+      <VBox fx:id="loginCard"
+                                                            spacing="18"
+                                                            alignment="CENTER"
+                                                            maxWidth="360"
+                                                            styleClass="card">
+        <Label text="Connexion au Cybercafé"
+                                                                               styleClass="title"/>
+        <TextField fx:id="usernameField"
+                                                                                   promptText="Nom d'utilisateur"
+                                                                                   styleClass="text-field"/>
+        <PasswordField fx:id="passwordField"
+                                                                                       promptText="Mot de passe"
+                                                                                       styleClass="text-field"/>
+        <PasswordField fx:id="pinField"
+                                                                                       promptText="Code PIN"
+                                                                                       styleClass="text-field"/>
+        <Button text="Se connecter"
+                                                                                onAction="#handleLogin"
+                                                                                styleClass="primary-btn"/>
+        <Hyperlink text="Créer un compte"
+                                                                                   onAction="#handleCreateAccount"
+                                                                                   styleClass="link"/>
+        <Label fx:id="errorLabel"
+                                                                               textFill="red"
+                                                                               styleClass="error-label"/>
+      </VBox>
+    </StackPane>
+  </children>
+</AnchorPane>

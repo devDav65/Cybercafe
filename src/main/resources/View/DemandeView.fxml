@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.monprojet.controllers.DemandeController"
+      styleClass="root-pane"
+      spacing="20"
+      alignment="CENTER"
+      stylesheets="@../css/demande.css">
+  <!-- Titre -->
+  <Label text="Gestion des Demandes" styleClass="title-label"/>
+  <!-- Formulaire d'édition -->
+  <HBox spacing="12" alignment="CENTER">
+    <TextField fx:id="dureeField" promptText="Durée (minutes)" styleClass="form-field"/>
+    <DatePicker fx:id="dateField" promptText="Date" styleClass="form-field"/>
+    <TextField fx:id="heureField" promptText="Heure (HH:mm)" styleClass="form-field"/>
+    <TextField fx:id="utilisateurIdField" promptText="Utilisateur ID" styleClass="form-field"/>
+    <TextField fx:id="posteIdField" promptText="Poste ID" styleClass="form-field"/>
+    <Button text="Ajouter" onAction="#ajouterDemande" styleClass="primary-btn"/>
+    <Button text="Modifier" onAction="#modifierDemande" styleClass="secondary-btn"/>
+    <Button text="Supprimer" onAction="#supprimerDemande" styleClass="danger-btn"/>
+  </HBox>
+  <!-- Barre de recherche -->
+  <HBox spacing="12" alignment="CENTER_LEFT">
+    <DatePicker fx:id="searchDatePicker" promptText="Date de recherche" styleClass="form-field"/>
+    <Button text="Rechercher" onAction="#rechercherParDate" styleClass="primary-btn"/>
+    <Button text="Réinitialiser" onAction="#resetRecherche" styleClass="secondary-btn"/>
+  </HBox>
+  <!-- Tableau -->
+  <TableView fx:id="demandeTable" prefHeight="320" prefWidth="650" styleClass="data-table">
+    <columns>
+      <TableColumn text="ID" fx:id="colId"/>
+      <TableColumn text="Durée" fx:id="colDuree"/>
+      <TableColumn text="Date &amp; Heure" fx:id="colDateHeure"/>
+      <TableColumn text="Utilisateur" fx:id="colUtilisateur"/>
+      <TableColumn text="Poste" fx:id="colPoste"/>
+    </columns>
+  </TableView>
+</VBox>

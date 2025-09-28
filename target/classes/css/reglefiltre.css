@@ -1,0 +1,103 @@
+/* --------- Racine --------- */
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: #ecf0f1;
+}
+
+/* --------- Conteneur principal --------- */
+.vbox {
+    -fx-padding: 30;
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+
+/* --------- Titre --------- */
+.vbox > Label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* --------- HBox (lignes de formulaire) --------- */
+.hbox {
+    -fx-spacing: 15;
+    -fx-alignment: center;
+}
+
+/* --------- Champs de saisie --------- */
+.text-field,
+.combo-box {
+    -fx-pref-width: 180;
+    -fx-padding: 8 12;
+    -fx-background-radius: 8;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 8;
+    -fx-focus-color: #3498db;
+    -fx-faint-focus-color: transparent;
+    -fx-font-size: 14px;
+}
+
+/* --------- Boutons --------- */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+.danger-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.danger-btn:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* --------- TableView --------- */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.table-view .column-header, 
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell:filled:selected, 
+.table-row-cell:filled:selected:hover {
+    -fx-background-color: #d6eaf8;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+/* --------- Centrage global --------- */
+.vbox .table-view {
+    -fx-max-width: 600;
+}

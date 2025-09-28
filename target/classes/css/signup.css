@@ -1,0 +1,46 @@
+/* ----------- Fond dégradé plein écran ----------- */
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #3b1d5e, #2c2d75, #4b104d);
+}
+
+/* ----------- Carte translucide ----------- */
+.signup-card {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-padding: 35 45;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 25, 0.3, 0, 0);
+}
+
+/* ----------- Titre ----------- */
+.title {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 20 0;
+}
+
+/* ----------- Champs ----------- */
+.text-field, .password-field {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.4);
+    -fx-border-width: 0 0 1 0;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.6);
+    -fx-font-size: 14px;
+}
+
+/* ----------- Bouton S'inscrire ----------- */
+.signup-btn {
+    -fx-background-color: linear-gradient(to right, #6a11cb, #2575fc);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25;
+    -fx-padding: 10 40;
+    -fx-cursor: hand;
+}
+.signup-btn:hover {
+    -fx-background-color: linear-gradient(to right, #7b2ff7, #5f9efc);
+}

@@ -1,0 +1,70 @@
+/* --------- Racine --------- */
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+    -fx-background-color: #ecf0f1;
+}
+
+/* --------- Menu gauche --------- */
+#sideMenu {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 25 20;
+    -fx-spacing: 15;
+    -fx-pref-width: 220;
+}
+
+/* Titre du menu */
+.menu-title {
+    -fx-text-fill: #ecf0f1;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Boutons du menu */
+.menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ecf0f1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16;
+    -fx-background-radius: 8;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0.3, 0, 1);
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.menu-btn:hover {
+    -fx-background-color: #34495e;
+}
+
+.menu-btn:focused, .menu-btn:pressed {
+    -fx-background-color: #1abc9c;
+    -fx-text-fill: white;
+}
+
+/* Bouton Déconnexion (accent rouge) */
+.logout-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.logout-btn:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* --------- Contenu principal --------- */
+.main-pane {
+    -fx-background-color: #ffffff;
+    -fx-padding: 30;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0.4, 0, 4);
+}
+
+.welcome-label {
+    -fx-font-size: 20px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}

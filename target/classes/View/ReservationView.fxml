@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.monprojet.controllers.ReservationController"
+      styleClass="root-pane"
+      spacing="20"
+      alignment="CENTER"
+      stylesheets="@../css/reservation.css">
+  <!-- Titre -->
+  <Label text="Gestion des Réservations" styleClass="title-label"/>
+  <!-- Formulaire d'édition -->
+  <HBox spacing="12" alignment="CENTER">
+    <DatePicker fx:id="dateField" promptText="Date" styleClass="form-field"/>
+    <TextField fx:id="heureField" promptText="Heure (HH:mm)" styleClass="form-field"/>
+    <TextField fx:id="utilisateurIdField" promptText="Utilisateur ID" styleClass="form-field"/>
+    <TextField fx:id="posteIdField" promptText="Poste ID" styleClass="form-field"/>
+    <Button text="Ajouter" onAction="#ajouterReservation" styleClass="primary-btn"/>
+    <Button text="Modifier" onAction="#modifierReservation" styleClass="primary-btn"/>
+    <Button text="Supprimer" onAction="#supprimerReservation" styleClass="danger-btn"/>
+  </HBox>
+  <!-- Barre de recherche -->
+  <HBox spacing="12" alignment="CENTER_LEFT">
+    <DatePicker fx:id="searchDatePicker" promptText="Date de recherche" styleClass="form-field"/>
+    <Button text="Rechercher" onAction="#rechercherParDate" styleClass="primary-btn"/>
+    <Button text="Réinitialiser" onAction="#resetRecherche" styleClass="primary-btn"/>
+  </HBox>
+  <!-- Tableau -->
+  <TableView fx:id="reservationTable" prefHeight="320" prefWidth="650" styleClass="data-table">
+    <columns>
+      <TableColumn text="ID" fx:id="colId"/>
+      <TableColumn text="Date" fx:id="colDate"/>
+      <TableColumn text="Heure" fx:id="colHeure"/>
+      <TableColumn text="Utilisateur" fx:id="colUtilisateur"/>
+      <TableColumn text="Poste" fx:id="colPoste"/>
+    </columns>
+  </TableView>
+</VBox>

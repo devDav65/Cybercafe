@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.monprojet.controllers.RegisterController"
+      spacing="12" alignment="CENTER" padding="20">
+  <Label text="Création de compte Propriétaire" style="-fx-font-size:18px;"/>
+  <TextField fx:id="usernameField" promptText="Nom d'utilisateur"/>
+  <PasswordField fx:id="passwordField" promptText="Mot de passe"/>
+  <PasswordField fx:id="confirmPasswordField" promptText="Confirmez le mot de passe"/>
+  <PasswordField fx:id="pinField" promptText="Code PIN (ex: 6 chiffres)"/>
+  <PasswordField fx:id="confirmPinField" promptText="Confirmez le code PIN"/>
+  <Button text="S'inscrire" onAction="#handleRegister"/>
+  <Hyperlink text="Déjà un compte ? Se connecter" onAction="#goToLogin"/>
+  <Label fx:id="messageLabel" textFill="red"/>
+</VBox>

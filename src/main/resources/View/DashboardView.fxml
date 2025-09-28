@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.monprojet.controllers.DashboardController"
+            stylesheets="@../css/dashboard.css">
+  <!-- Menu gauche -->
+  <left>
+    <VBox fx:id="sideMenu" spacing="15">
+      <Label text="Mon Cybercafé" styleClass="menu-title"/>
+      <Button text="Utilisateurs" onAction="#showUtilisateurs" styleClass="menu-btn"/>
+      <Button text="Postes" onAction="#showPostes" styleClass="menu-btn"/>
+      <Button text="Réservations" onAction="#showReservations" styleClass="menu-btn"/>
+      <Button text="Demandes" onAction="#showDemandes" styleClass="menu-btn"/>
+      <Button text="Journaux" onAction="#showJournaux" styleClass="menu-btn"/>
+      <Button text="Règles de filtrage" onAction="#showRegles" styleClass="menu-btn"/>
+      <Button text="Déconnexion" onAction="#logout" styleClass="menu-btn logout-btn"/>
+    </VBox>
+  </left>
+
+  <!-- Contenu principal -->
+  <center>
+    <StackPane fx:id="mainContent" styleClass="main-pane">
+      <Label text="Bienvenue dans le tableau de bord !" styleClass="welcome-label"/>
+    </StackPane>
+  </center>
+</BorderPane>

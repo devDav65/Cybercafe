@@ -1,0 +1,80 @@
+/* Racine */
+.root-pane {
+    -fx-padding: 25;
+    -fx-background-color: #ecf0f1;
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+}
+
+/* Titre */
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Champs texte & date */
+.form-field {
+    -fx-pref-width: 150;
+    -fx-padding: 6 10;
+    -fx-background-radius: 6;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 6;
+}
+
+.form-field:focused {
+    -fx-border-color: #3498db;
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 4, 0.4, 0, 0);
+}
+
+/* Boutons */
+.primary-btn {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+    -fx-font-weight: bold;
+}
+.primary-btn:hover {
+    -fx-background-color: #2980b9;
+}
+
+.secondary-btn {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+    -fx-font-weight: bold;
+}
+.secondary-btn:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.danger-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+    -fx-font-weight: bold;
+}
+.danger-btn:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Table */
+.data-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+}
+
+.data-table .column-header-background {
+    -fx-background-color: #34495e;
+}
+
+.data-table .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}

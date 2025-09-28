@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.monprojet.controllers.PosteController"
+      spacing="20" alignment="TOP_CENTER"
+      styleClass="poste-root"
+      stylesheets="@../css/poste.css">
+  <!-- Titre principal -->
+  <Label text="Gestion des Postes" styleClass="title-label"/>
+  <!-- Formulaire d'ajout / modification -->
+  <HBox spacing="12" alignment="CENTER" styleClass="form-box">
+    <TextField fx:id="referenceField" promptText="Référence" styleClass="input-field"/>
+    <TextField fx:id="ipField" promptText="Adresse IP" styleClass="input-field"/>
+    <TextField fx:id="emplacementField" promptText="Emplacement" styleClass="input-field"/>
+    <ComboBox fx:id="etatCombo" promptText="État" styleClass="combo-field"/>
+    <Button text="Ajouter" onAction="#ajouterPoste" styleClass="action-btn"/>
+    <Button text="Modifier" onAction="#modifierPoste" styleClass="action-btn"/>
+    <Button text="Supprimer" onAction="#supprimerPoste" styleClass="danger-btn"/>
+  </HBox>
+  <!-- Barre de recherche -->
+  <HBox spacing="12" alignment="CENTER" styleClass="search-box">
+    <TextField fx:id="searchField" promptText="Rechercher par référence ou IP" styleClass="input-field search"/>
+    <Button text="Rechercher" onAction="#rechercherPoste" styleClass="action-btn"/>
+    <Button text="Réinitialiser" onAction="#resetRecherche" styleClass="action-btn"/>
+  </HBox>
+  <!-- Tableau -->
+  <TableView fx:id="posteTable" prefHeight="350" prefWidth="700" styleClass="modern-table">
+    <columns>
+      <TableColumn text="ID" fx:id="colId"/>
+      <TableColumn text="Référence" fx:id="colReference"/>
+      <TableColumn text="Adresse IP" fx:id="colIP"/>
+      <TableColumn text="Emplacement" fx:id="colEmplacement"/>
+      <TableColumn text="État" fx:id="colEtat"/>
+    </columns>
+  </TableView>
+</VBox>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.monprojet.controllers.SignupController"
+            stylesheets="@../css/signup.css">
+  <children>
+    <VBox alignment="CENTER" spacing="20"
+                  AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                  AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+      <!-- Carte translucide -->
+      <StackPane styleClass="signup-card" maxWidth="400" maxHeight="460">
+        <VBox alignment="CENTER" spacing="15">
+          <Label text="Créer un compte propriétaire" styleClass="title"/>
+          <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="280"/>
+          <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="280"/>
+          <PasswordField fx:id="pinField" promptText="Code PIN" maxWidth="280"/>
+          <Button text="S'inscrire" onAction="#handleSignup"
+                                      maxWidth="200" styleClass="signup-btn"/>
+          <Label fx:id="errorLabel" textFill="red"/>
+        </VBox>
+      </StackPane>
+    </VBox>
+  </children>
+</AnchorPane>

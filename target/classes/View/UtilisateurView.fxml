@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.monprojet.controllers.UtilisateurController"
+      spacing="20" alignment="CENTER" styleClass="root-pane"
+      stylesheets="@../css/utilisateur.css">
+  <!-- Titre -->
+  <Label text="Gestion des Utilisateurs" styleClass="title-label"/>
+  <!-- Formulaire d'ajout / modification -->
+  <HBox spacing="10" alignment="CENTER" styleClass="form-box">
+    <TextField fx:id="nomField" promptText="Nom" styleClass="input-field"/>
+    <TextField fx:id="prenomField" promptText="Prénom" styleClass="input-field"/>
+    <PasswordField fx:id="passwordField" promptText="Mot de passe" styleClass="input-field"/>
+    <Button text="Ajouter" onAction="#ajouterUtilisateur" styleClass="action-btn"/>
+    <Button text="Modifier" onAction="#modifierUtilisateur" styleClass="action-btn"/>
+    <Button text="Supprimer" onAction="#supprimerUtilisateur" styleClass="danger-btn"/>
+  </HBox>
+  <!-- Recherche -->
+  <HBox spacing="10" alignment="CENTER" styleClass="search-box">
+    <TextField fx:id="searchField" promptText="Rechercher par nom ou prénom" styleClass="input-field"/>
+    <Button text="Rechercher" onAction="#rechercherUtilisateur" styleClass="action-btn"/>
+    <Button text="Réinitialiser" onAction="#resetRecherche" styleClass="action-btn"/>
+  </HBox>
+  <!-- Table -->
+  <TableView fx:id="utilisateurTable" prefHeight="320" prefWidth="650" styleClass="user-table">
+    <columns>
+      <TableColumn text="ID" fx:id="colId"/>
+      <TableColumn text="Nom" fx:id="colNom"/>
+      <TableColumn text="Prénom" fx:id="colPrenom"/>
+      <TableColumn text="Date Abonnement" fx:id="colDateAbonne"/>
+    </columns>
+  </TableView>
+</VBox>
