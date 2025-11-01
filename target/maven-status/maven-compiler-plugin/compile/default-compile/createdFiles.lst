@@ -4,9 +4,9 @@ com/example/monprojet/model/Demande.class
 com/example/monprojet/controllers/SignupController.class
 com/example/monprojet/controllers/ReservationController.class
 com/example/monprojet/model/Reservation.class
+com/example/monprojet/service/ProprietaireService.class
 com/example/monprojet/Util/FileUtils.class
 com/example/monprojet/controllers/SessionScheduler.class
-com/example/monprojet/service/ProprietaireService.class
 com/example/monprojet/controllers/JournalController.class
 com/example/monprojet/service/UtilisateurService.class
 com/example/monprojet/model/Journal.class
@@ -37,6 +37,7 @@ com/example/monprojet/dao/UtilisateurDAO.class
 com/example/monprojet/Util/Validator.class
 com/example/monprojet/model/Poste.class
 com/example/monprojet/dao/JournalDAO.class
+com/example/monprojet/controllers/RegisterController.class
 com/example/monprojet/Util/PasswordUtils.class
 com/example/monprojet/service/RegleFiltreService.class
 com/example/monprojet/service/PacketProcessor.class
